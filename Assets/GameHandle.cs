@@ -10,7 +10,7 @@ public class GameHandle : MonoBehaviour
     {
         
     }
-    public string gameDir = @"/Games/Prototype/";
+    public string gameDir = @"D:/Games/Prototype/";
     public string coreFiles()
     {
         return  gameDir + @"" + @"Game/";

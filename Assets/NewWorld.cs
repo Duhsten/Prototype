@@ -9,6 +9,7 @@ public class NewWorld : MonoBehaviour
 {
     public InputField worldName;
     public InputField seedInput;
+    public Canvas newGameCanvas;
     public int Seed;
     // Start is called before the first frame update
     void Start()
@@ -41,6 +42,10 @@ public class NewWorld : MonoBehaviour
         SaveManager sav = new SaveManager();
         sav.createSave(worldName.text, Seed);
         SceneManager.LoadScene("Simple/Simple");
+    }
+    public void Cancel()
+    {
+        newGameCanvas.enabled = false;
     }
     // Update is called once per frame
     void Update()
