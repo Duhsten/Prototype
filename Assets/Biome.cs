@@ -8,6 +8,8 @@ using Newtonsoft.Json.Linq;
 
 public class Biome : MonoBehaviour
 {
+    public GameObject[] grass;
+    public GameObject[] mountain;
     public GameObject rock;
     public string CurrentBiome;
     public player Player;
@@ -44,12 +46,27 @@ public class Biome : MonoBehaviour
         GenerateMeshSimple gm = terrain.GetComponent<GenerateMeshSimple>();
         gm.TerrainSize = terrainSize;
         gm.Gradient = plainsGradient;
-        gm.NoiseScale = 70f;
+        gm.NoiseScale = 3f;
         gm.CellSize = 1f;
         gm.NoiseOffset = NoiseOffsetPlains(xIndex, yIndex);
         gm.Generate();
+        if (Random.Range(1, 4) == 1) // 33% Chance of Spawning
+        {
+            if (Random.Range(1, 3) == 1) // 50% Chance of Spawning 
+            {
+                Vector3 pos = new Vector3(terrain.transform.position.x * Random.Range(1f, 2f), terrainSize.y, terrain.transform.position.z * Random.Range(1f, 2f));
+                Instantiate(grass[0], pos, rock.transform.rotation);
 
- 
+            }
+            else
+            {
+                Vector3 pos = new Vector3(terrain.transform.position.x * Random.Range(1f, 2f), terrainSize.y, terrain.transform.position.z * Random.Range(1f, 2f));
+                Instantiate(grass[1], pos, rock.transform.rotation);
+
+            }
+
+        }
+
         return terrain;
 
 
@@ -74,6 +91,24 @@ public class Biome : MonoBehaviour
         gm.CellSize = 1f;
         gm.NoiseOffset = NoiseOffsetHill(xIndex, yIndex);
         gm.Generate();
+        if (Random.Range(0, 1f) <= .025f) // 33% Chance of Spawning
+        {
+            float rando = Random.Range(0, 1f);
+            if (rando >= .5f) // 50% Chance of Spawning 
+            {
+                Vector3 pos = new Vector3(terrain.transform.position.x * Random.Range(1f, 2f), terrainSize.y, terrain.transform.position.z * Random.Range(1f, 2f));
+                Instantiate(mountain[0], pos, mountain[0].transform.rotation);
+
+            }
+            else
+            {
+                Vector3 pos = new Vector3(terrain.transform.position.x * Random.Range(1f, 2f), terrainSize.y, terrain.transform.position.z * Random.Range(1f, 2f));
+                Instantiate(mountain[1], pos, mountain[1].transform.rotation);
+
+            }
+           
+
+        }
         if (Random.Range(1, 4) == 1)
         {
             Vector3 pos = new Vector3(terrain.transform.position.x * Random.Range(1f, 2f), terrainSize.y, terrain.transform.position.z * Random.Range(1f, 2f));
@@ -143,8 +178,8 @@ public class Biome : MonoBehaviour
     private Vector2 NoiseOffsetPlains(int xIndex, int yIndex)
     {
         Vector2 noiseOffset = new Vector2(
-            (xIndex * 70f + startOffset.x) % 256,
-            (yIndex * 70f + startOffset.y) % 256
+            (xIndex * 3f + startOffset.x) % 256,
+            (yIndex * 3f + startOffset.y) % 256
         );
         //account for negatives (ex. -1 % 256 = -1). needs to loop around to 255
         if (noiseOffset.x < 0)
