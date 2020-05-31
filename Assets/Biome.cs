@@ -8,6 +8,7 @@ using Newtonsoft.Json.Linq;
 
 public class Biome : MonoBehaviour
 {
+    public GameObject rock;
     public string CurrentBiome;
     public player Player;
     public GameObject terrainTilePrefab;
@@ -48,6 +49,7 @@ public class Biome : MonoBehaviour
         gm.NoiseOffset = NoiseOffsetPlains(xIndex, yIndex);
         gm.Generate();
 
+ 
         return terrain;
 
 
@@ -72,7 +74,11 @@ public class Biome : MonoBehaviour
         gm.CellSize = 1f;
         gm.NoiseOffset = NoiseOffsetHill(xIndex, yIndex);
         gm.Generate();
-
+        if (Random.Range(1, 4) == 1)
+        {
+            Vector3 pos = new Vector3(terrain.transform.position.x * Random.Range(1f, 2f), terrainSize.y, terrain.transform.position.z * Random.Range(1f, 2f));
+            Instantiate(rock, pos, rock.transform.rotation);
+        }
         return terrain;
 
 
