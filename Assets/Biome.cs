@@ -8,6 +8,7 @@ using Newtonsoft.Json.Linq;
 
 public class Biome : MonoBehaviour
 {
+    private bool rad;
     public MeshCollider test;
     public GameObject[] grass;
     public GameObject[] mountain;
@@ -58,32 +59,6 @@ public class Biome : MonoBehaviour
 
 
     }
-    private void spawnEntity(GameObject entity, Vector3 position, int rotationY, float spawnrate, float spreadX, float spreadZ, bool foliage )
-    {
-        int seed = PlayerPrefs.GetInt("Seed");
-        Random.seed = seed;
-        int randomChance = Random.Range(0, 101);
-
-        if (randomChance < spawnrate)
-        {
-            int rY = rotationY;
-
-            if (rotationY == 0)
-            {
-                rY = Random.Range(0, 181) * 2;
-
-            }
-        
-            Vector3 outputPos = new Vector3(position.x * spreadX, 0, position.z * spreadZ);
-            Instantiate(entity, outputPos, Quaternion.Euler(0, rY, 0));
-
-        }
-
-
-
-
-
-    }
     public GameObject hillsBiome(int xIndex, int yIndex)
     {
         Biome biome = new Biome();
@@ -107,14 +82,27 @@ public class Biome : MonoBehaviour
         // Biome Enviroment Handle
         // Mountain Entity 
         float rate;
-        if (Random.Range(0,101) <= 10) // Rate at which Mountains will Spawn
+        if (Random.Range(0, 101) <= 5) // Rate at which Mountains will Spawn
         {
-            spawnEntity(mountain[1], terrain.transform.position, 0, 100f, Random.Range(-4f, 4f), Random.Range(-4f, 4f), false);
+            int x;
+            int z;
+            if (rad == true)
+            {
+                spawnEntity(mountain[1], terrain.transform.position, 0, 100f, Random.Range(100, 200), Random.Range(100, 200), false);
+                rad = !rad;
+
+            }
+            else if (rad == false)
+            {
+                spawnEntity(mountain[1], terrain.transform.position, 0, 100f, Random.Range(-100, -200), Random.Range(-100, -200), false);
+                rad = !rad;
+
+            }
 
         }
         else
         {
-          //  spawnEntity(mountain[1], terrain.transform.position, 0, 30f, Random.Range(-4f, 4f), Random.Range(-4f, 4f), false);
+            //  spawnEntity(mountain[1], terrain.transform.position, 0, 30f, Random.Range(-4f, 4f), Random.Range(-4f, 4f), false);
 
         }
         return terrain;
@@ -122,6 +110,33 @@ public class Biome : MonoBehaviour
 
 
     }
+    private void spawnEntity(GameObject entity, Vector3 position, int rotationY, float spawnrate, int spreadX, int spreadZ, bool foliage )
+    {
+        int seed = PlayerPrefs.GetInt("Seed");
+        Random.seed = seed;
+        int randomChance = Random.Range(0, 101);
+
+        if (randomChance < spawnrate)
+        {
+            int rY = rotationY;
+
+            if (rotationY == 0)
+            {
+                rY = Random.Range(0, 181) * 2;
+
+            }
+        
+            Vector3 outputPos = new Vector3(position.x + spreadX, 0, position.z + spreadZ);
+            Instantiate(entity, outputPos, Quaternion.Euler(0, rY, 0));
+
+        }
+
+
+
+
+
+    }
+
 
     public void listBiomes()
     {
