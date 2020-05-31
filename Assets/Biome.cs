@@ -8,6 +8,7 @@ using Newtonsoft.Json.Linq;
 
 public class Biome : MonoBehaviour
 {
+    public MeshCollider test;
     public GameObject[] grass;
     public GameObject[] mountain;
     public GameObject rock;
@@ -50,24 +51,35 @@ public class Biome : MonoBehaviour
         gm.CellSize = 1f;
         gm.NoiseOffset = NoiseOffsetPlains(xIndex, yIndex);
         gm.Generate();
-        if (Random.Range(1, 4) == 1) // 33% Chance of Spawning
+        spawnEntity(grass[1], terrain.transform.position, 0, 20, 1, 1, true);
+
+        return terrain;
+
+
+
+    }
+    private void spawnEntity(GameObject entity, Vector3 position, int rotationY, float spawnrate, float spreadX, float spreadZ, bool foliage )
+    {
+        int seed = PlayerPrefs.GetInt("Seed");
+        Random.seed = seed;
+        int randomChance = Random.Range(0, 101);
+
+        if (randomChance < spawnrate)
         {
-            if (Random.Range(1, 3) == 1) // 50% Chance of Spawning 
+            int rY = rotationY;
+
+            if (rotationY == 0)
             {
-                Vector3 pos = new Vector3(terrain.transform.position.x * Random.Range(1f, 2f), terrainSize.y, terrain.transform.position.z * Random.Range(1f, 2f));
-                Instantiate(grass[0], pos, rock.transform.rotation);
+                rY = Random.Range(0, 181) * 2;
 
             }
-            else
-            {
-                Vector3 pos = new Vector3(terrain.transform.position.x * Random.Range(1f, 2f), terrainSize.y, terrain.transform.position.z * Random.Range(1f, 2f));
-                Instantiate(grass[1], pos, rock.transform.rotation);
-
-            }
+        
+            Vector3 outputPos = new Vector3(position.x * spreadX, 0, position.z * spreadZ);
+            Instantiate(entity, outputPos, Quaternion.Euler(0, rY, 0));
 
         }
 
-        return terrain;
+
 
 
 
@@ -91,28 +103,19 @@ public class Biome : MonoBehaviour
         gm.CellSize = 1f;
         gm.NoiseOffset = NoiseOffsetHill(xIndex, yIndex);
         gm.Generate();
-        if (Random.Range(0, 1f) <= .025f) // 33% Chance of Spawning
+
+        // Biome Enviroment Handle
+        // Mountain Entity 
+        float rate;
+        if (Random.Range(0,101) <= 10) // Rate at which Mountains will Spawn
         {
-            float rando = Random.Range(0, 1f);
-            if (rando >= .5f) // 50% Chance of Spawning 
-            {
-                Vector3 pos = new Vector3(terrain.transform.position.x * Random.Range(1f, 2f), terrainSize.y, terrain.transform.position.z * Random.Range(1f, 2f));
-                Instantiate(mountain[0], pos, mountain[0].transform.rotation);
-
-            }
-            else
-            {
-                Vector3 pos = new Vector3(terrain.transform.position.x * Random.Range(1f, 2f), terrainSize.y, terrain.transform.position.z * Random.Range(1f, 2f));
-                Instantiate(mountain[1], pos, mountain[1].transform.rotation);
-
-            }
-           
+            spawnEntity(mountain[1], terrain.transform.position, 0, 100f, Random.Range(-4f, 4f), Random.Range(-4f, 4f), false);
 
         }
-        if (Random.Range(1, 4) == 1)
+        else
         {
-            Vector3 pos = new Vector3(terrain.transform.position.x * Random.Range(1f, 2f), terrainSize.y, terrain.transform.position.z * Random.Range(1f, 2f));
-            Instantiate(rock, pos, rock.transform.rotation);
+          //  spawnEntity(mountain[1], terrain.transform.position, 0, 30f, Random.Range(-4f, 4f), Random.Range(-4f, 4f), false);
+
         }
         return terrain;
 
