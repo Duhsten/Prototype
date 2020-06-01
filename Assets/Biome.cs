@@ -8,16 +8,28 @@ using Newtonsoft.Json.Linq;
 
 public class Biome : MonoBehaviour
 {
-    private bool rad;
-    public MeshCollider test;
+
+    public SpawnEntity SpawnEntity;
+
+    [Header("Desert Biome")]
+    
+    public Gradient desertGradient;
+
+    public AudioSource desertAmbient;
+    [Header("Plains Biome")]
     public GameObject[] grass;
-    public GameObject[] mountain;
-    public GameObject rock;
+    public Gradient plainsGradient;
+    [Header("Other Settings")]
     public string CurrentBiome;
     public player Player;
     public GameObject terrainTilePrefab;
-    public Gradient plainsGradient;
-    public Gradient hillsGradient;
+    private bool rad;
+    public MeshCollider test;
+
+    //random shit
+    private int random2;
+
+
     GameHandle game = new GameHandle();
     private Vector3 terrainSize = new Vector3(20, 1, 20);
     public TerrainControllerSimple terrianControl;
@@ -25,7 +37,7 @@ public class Biome : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-       
+
         listBiomes();
     }
     public void loadBiome()
@@ -44,7 +56,7 @@ public class Biome : MonoBehaviour
         terrain.name = TrimEnd(terrain.name, "(Clone)") + " [" + xIndex + " , " + yIndex + "]";
 
         terrianControl.terrainTiles.Add(new Vector2(xIndex, yIndex), terrain);
-        Debug.Log("Plain Biome");
+        //  Debug.Log("Plain Biome");
         GenerateMeshSimple gm = terrain.GetComponent<GenerateMeshSimple>();
         gm.TerrainSize = terrainSize;
         gm.Gradient = plainsGradient;
@@ -59,8 +71,9 @@ public class Biome : MonoBehaviour
 
 
     }
-    public GameObject hillsBiome(int xIndex, int yIndex)
+    public GameObject desertBiome(int xIndex, int yIndex)
     {
+        desertAmbient.Play();
         Biome biome = new Biome();
         GameObject terrain = Instantiate(
          terrainTilePrefab,
@@ -70,47 +83,24 @@ public class Biome : MonoBehaviour
         terrain.name = TrimEnd(terrain.name, "(Clone)") + " [" + xIndex + " , " + yIndex + "]";
 
         terrianControl.terrainTiles.Add(new Vector2(xIndex, yIndex), terrain);
-        Debug.Log("Hill Biome");
+        // Debug.Log("Hill Biome");
         GenerateMeshSimple gm = terrain.GetComponent<GenerateMeshSimple>();
         gm.TerrainSize = new Vector3(20, 1, 20); ;
-        gm.Gradient = hillsGradient;
+        gm.Gradient = desertGradient;
         gm.NoiseScale = 3f;
         gm.CellSize = 1f;
         gm.NoiseOffset = NoiseOffsetHill(xIndex, yIndex);
         gm.Generate();
 
-        // Biome Enviroment Handle
-        // Mountain Entity 
-        float rate;
-        if (Random.Range(0, 101) <= 5) // Rate at which Mountains will Spawn
-        {
-            int x;
-            int z;
-            if (rad == true)
-            {
-                spawnEntity(mountain[1], terrain.transform.position, 0, 100f, Random.Range(100, 200), Random.Range(100, 200), false);
-                rad = !rad;
-
-            }
-            else if (rad == false)
-            {
-                spawnEntity(mountain[1], terrain.transform.position, 0, 100f, Random.Range(-100, -200), Random.Range(-100, -200), false);
-                rad = !rad;
-
-            }
-
-        }
-        else
-        {
-            //  spawnEntity(mountain[1], terrain.transform.position, 0, 30f, Random.Range(-4f, 4f), Random.Range(-4f, 4f), false);
-
-        }
+        SpawnEntity.dustStorm(terrain.transform.position);
+        SpawnEntity.Rock(terrain.transform.position);
+        SpawnEntity.Mountain(terrain.transform.position);
         return terrain;
 
 
 
     }
-    private void spawnEntity(GameObject entity, Vector3 position, int rotationY, float spawnrate, int spreadX, int spreadZ, bool foliage )
+    private void spawnEntity(GameObject entity, Vector3 position, int rotationY, float spawnrate, int spreadX, int spreadZ, bool foliage)
     {
         int seed = PlayerPrefs.GetInt("Seed");
         Random.seed = seed;
@@ -125,9 +115,10 @@ public class Biome : MonoBehaviour
                 rY = Random.Range(0, 181) * 2;
 
             }
-        
-            Vector3 outputPos = new Vector3(position.x + spreadX, 0, position.z + spreadZ);
+
+            Vector3 outputPos = new Vector3(position.x + spreadX, position.y, position.z + spreadZ);
             Instantiate(entity, outputPos, Quaternion.Euler(0, rY, 0));
+            Debug.Log("Spawning Entity: " + entity.ToString() + "@ " + outputPos.ToString());
 
         }
 
@@ -153,9 +144,9 @@ public class Biome : MonoBehaviour
         
         **/
     }
-        // Update is called once per frame
-        void Update()
-        {
+    // Update is called once per frame
+    void Update()
+    {
         int seed = PlayerPrefs.GetInt("Seed");
         Random.seed = seed;
     }
@@ -169,17 +160,17 @@ public class Biome : MonoBehaviour
         }
         else
         {
-            CurrentBiome = "Hills";
-            return hillsBiome(xIndex, yIndex);
+            CurrentBiome = "desert";
+            return desertBiome(xIndex, yIndex);
         }
     }
     private static string TrimEnd(string str, string end)
-        {
-        Debug.Log("Trimming");
-            if (str.EndsWith(end))
-                return str.Substring(0, str.LastIndexOf(end));
-            return str;
-        }
+    {
+
+        if (str.EndsWith(end))
+            return str.Substring(0, str.LastIndexOf(end));
+        return str;
+    }
     private Vector2 NoiseOffsetHill(int xIndex, int yIndex)
     {
         Vector2 noiseOffset = new Vector2(
