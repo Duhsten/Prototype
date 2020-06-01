@@ -12,7 +12,7 @@ public class Biome : MonoBehaviour
     public SpawnEntity SpawnEntity;
 
     [Header("Desert Biome")]
-    
+
     public Gradient desertGradient;
 
     public AudioSource desertAmbient;
