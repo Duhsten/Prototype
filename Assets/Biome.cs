@@ -64,7 +64,7 @@ public class Biome : MonoBehaviour
         gm.CellSize = 1f;
         gm.NoiseOffset = NoiseOffsetPlains(xIndex, yIndex);
         gm.Generate();
-        spawnEntity(grass[1], terrain.transform.position, 0, 20, 1, 1, true);
+       
 
         return terrain;
 
@@ -100,33 +100,7 @@ public class Biome : MonoBehaviour
 
 
     }
-    private void spawnEntity(GameObject entity, Vector3 position, int rotationY, float spawnrate, int spreadX, int spreadZ, bool foliage)
-    {
-        int seed = PlayerPrefs.GetInt("Seed");
-        Random.seed = seed;
-        int randomChance = Random.Range(0, 101);
-
-        if (randomChance < spawnrate)
-        {
-            int rY = rotationY;
-
-            if (rotationY == 0)
-            {
-                rY = Random.Range(0, 181) * 2;
-
-            }
-
-            Vector3 outputPos = new Vector3(position.x + spreadX, position.y, position.z + spreadZ);
-            Instantiate(entity, outputPos, Quaternion.Euler(0, rY, 0));
-            Debug.Log("Spawning Entity: " + entity.ToString() + "@ " + outputPos.ToString());
-
-        }
-
-
-
-
-
-    }
+   
 
 
     public void listBiomes()
