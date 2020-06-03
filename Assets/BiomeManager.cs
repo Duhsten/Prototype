@@ -1,9 +1,11 @@
-﻿using System.Collections;
+﻿using Newtonsoft.Json.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class BiomeManager : MonoBehaviour
 {
+    public GameObject player;
     // Start is called before the first frame update
     void Start()
     {
@@ -14,6 +16,15 @@ public class BiomeManager : MonoBehaviour
     void Update()
     {
         
+    }
+    public void GenerateBiome(bool firstGen)
+    {
+        if(firstGen == true)
+        {
+
+        }
+        Vector3 playerPos = player.transform.position;
+
     }
     public void CreatePoints(int h, int w)
     {

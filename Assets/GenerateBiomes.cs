@@ -19,6 +19,7 @@ public class GenerateBiomes : MonoBehaviour
     public bool n;
     public int countb;
     public int genMax;
+    public bool fin = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -43,11 +44,12 @@ public class GenerateBiomes : MonoBehaviour
     public void generateBiome(int h, int w, int randomX, int randomY)
     {
 
-        if (genMax > 500)
+        if (genMax > 1000)
         {
             writeBiome();
+            fin = true;
         }
-        if (genMax <= 500)
+        if (genMax <= 1000)
         {
 
             // Creates a Rectangle and then checks if it intersects with anything and doesnt add it to the list of it does
@@ -77,7 +79,7 @@ public class GenerateBiomes : MonoBehaviour
                 int randomC = Random.Range(0, 101);
                 if (randomC <= 50)
                 {
-                    image.color = new Color32(253, 151, 0, 255);
+                    image.color = new Color32(255, 255, 255, 255);
                     biomeText.text = "Desert";
                     biomeList.Add(new Biomes { Biome = "Desert", x = randomX, y = randomY, recc = rec });
                     Debug.Log("Creating Biome: " + "Desert, " + "(" + randomX + ", " + randomY + ")");
@@ -85,7 +87,7 @@ public class GenerateBiomes : MonoBehaviour
                 }
                 else
                 {
-                    image.color = new Color32(66, 174, 0, 255);
+                    image.color = new Color32(255, 255, 255, 255);
                     biomeText.text = "Plains";
                     biomeList.Add(new Biomes { Biome = "Plains", x = randomX, y = randomY, recc = rec });
                     Debug.Log("Creating Biome: " + "Plains, " + "(" + randomX + ", " + randomY + ")");
@@ -115,7 +117,9 @@ public class GenerateBiomes : MonoBehaviour
     {
 
         Debug.Log("Converting");
-        using (StreamWriter file = File.CreateText(@"biomedata.json"))
+        string save = PlayerPrefs.GetString("GameSave");
+        string filejson = @"Saves/" + save + "/biomedata.json";
+        using (StreamWriter file = File.CreateText(filejson))
         {
             JsonSerializer serializer = new JsonSerializer();
             serializer.NullValueHandling = NullValueHandling.Ignore;
@@ -123,9 +127,8 @@ public class GenerateBiomes : MonoBehaviour
             serializer.Serialize(file, biomeList);
         }
 
-
-
     }
+
     public bool checkList(Rectangle r)
     {
         bool localcheck = false;

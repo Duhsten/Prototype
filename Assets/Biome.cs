@@ -5,11 +5,13 @@ using Newtonsoft.Json;
 using System.Text;
 using System.IO;
 using Newtonsoft.Json.Linq;
+using System.Drawing;
+
 
 public class Biome : MonoBehaviour
 {
-
-    public SpawnEntity SpawnEntity;
+    public List<Biomes> biomeList;
+        public SpawnEntity SpawnEntity;
 
     [Header("Desert Biome")]
 
@@ -37,8 +39,10 @@ public class Biome : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        biomeList = JsonConvert.DeserializeObject<List<Biomes>>(File.ReadAllText(@"Saves/" + PlayerPrefs.GetString("GameSave") + "/biomedata.json"));
 
         listBiomes();
+       
     }
     public void loadBiome()
     {
@@ -96,27 +100,13 @@ public class Biome : MonoBehaviour
         SpawnEntity.Rock(terrain.transform.position);
         SpawnEntity.Mountain(terrain.transform.position);
         return terrain;
-
-
-
     }
    
 
-
     public void listBiomes()
     {
-
-        /** Broken lol
-         using (StreamReader r = new StreamReader(game.coreFiles() + @"biomes.json"))
-            {
-                string json = r.ReadToEnd();
-                List<Biomes> ro = JsonConvert.DeserializeObject<List<Biomes>>(json);
-                Debug.Log(ro[1].biomeName);
-            }
-        
-        
-        
-        **/
+    
+     
     }
     // Update is called once per frame
     void Update()
@@ -126,17 +116,53 @@ public class Biome : MonoBehaviour
     }
     public GameObject CreateTile(int xIndex, int yIndex)
     {
-        Vector3 test = new Vector3(40, 0, 0);
-        if (Player.Location.x >= test.x)
+        foreach (Biomes bio in biomeList)
         {
-            CurrentBiome = "Plains";
-            return plainsBiome(xIndex, yIndex);
+            Vector2 point = new Vector2(terrainSize.x * xIndex, terrainSize.z * yIndex);
+            float x = terrainSize.x * xIndex;
+            float y = terrainSize.z * yIndex;
+            Point s = new Point(System.Convert.ToInt32(x), System.Convert.ToInt32(y));
+            if (bio.recc.Contains(s))
+            {
+                if (bio.Biome == "Plains")
+                {
+                    Debug.Log("Generating Plains");
+                    return plainsBiome(xIndex, yIndex);
+
+                }
+                else if (bio.Biome == "Desert")
+                {
+                    Debug.Log("Generating Desert");
+                    return desertBiome(xIndex, yIndex);
+                }
+            }
         }
-        else
+        try
         {
-            CurrentBiome = "desert";
-            return desertBiome(xIndex, yIndex);
+            
+            Biomes result = biomeList.Find(x => x.x == terrainSize.x * xIndex && x.y == terrainSize.z * yIndex);
+            if (result.x == terrainSize.x * xIndex && result.y == terrainSize.z * yIndex)
+            {
+                if (result.Biome == "Plains")
+                {
+                    Debug.Log("Generating Plains");
+                    return plainsBiome(xIndex, yIndex);
+                    
+                }
+                else if (result.Biome == "Desert")
+                {
+                    Debug.Log("Generating Desert");
+                    return desertBiome(xIndex, yIndex);
+                }
+            }
         }
+        catch
+        {
+
+        }
+        Debug.Log("TESTTTTT");
+        return plainsBiome(xIndex, yIndex);
+
     }
     private static string TrimEnd(string str, string end)
     {
